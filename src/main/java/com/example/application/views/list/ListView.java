@@ -12,12 +12,21 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.context.annotation.Scope;
 
 import javax.annotation.security.PermitAll;
 import java.util.Objects;
 
+//Add the Spring @Component annotation to make it possible to @Autowire it.
+@org.springframework.stereotype.Component
+//Also add @Scope("prototype") to ensure that every test run gets a fresh instance.
+@Scope("prototype")
 @PermitAll
 @PageTitle("Contacts | Vaadin CRM")
+/*
+The annotation {@Component, @Scope} isn’t needed for normal application runs
+You didn’t need to add the annotation for normal application usage, as all @Route classes are automatically instantiated by Vaadin in a Spring-compatible way.
+*/
 //ListView still matches the empty path, but now uses MainLayout as its parent.
 @Route(value = "", layout = MainLayout.class)
 //The view extends VerticalLayout, which places all child components vertically.
