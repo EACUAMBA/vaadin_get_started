@@ -28,7 +28,7 @@ public class SecurityConfig
             ));
 
             createUser(new User(
-                    "ädmin",
+                    "admin",
                     "{noop}userpass",
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_ADMIN"))
             ));

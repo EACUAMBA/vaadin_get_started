@@ -41,6 +41,7 @@ public class MainLayout extends AppLayout {
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         //Call header.expand(logo) to make the logo take up all the extra space in the layout. This pushes the logout button to the far right.
         header.expand(logo);
+        header.setWidth("100%");
         header.addClassNames("py-0", "px-m");
 
         //Adds the header layout to the application layout’s nav bar, the section at the top of the screen.
