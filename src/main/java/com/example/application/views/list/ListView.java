@@ -13,8 +13,10 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import javax.annotation.security.PermitAll;
 import java.util.Objects;
 
+@PermitAll
 @PageTitle("Contacts | Vaadin CRM")
 //ListView still matches the empty path, but now uses MainLayout as its parent.
 @Route(value = "", layout = MainLayout.class)
