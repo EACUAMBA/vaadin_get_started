@@ -2,6 +2,7 @@ package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
 import com.example.application.data.service.CRMService;
+import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
@@ -15,7 +16,8 @@ import com.vaadin.flow.router.Route;
 import java.util.Objects;
 
 @PageTitle("Contacts | Vaadin CRM")
-@Route(value = "")
+//ListView still matches the empty path, but now uses MainLayout as its parent.
+@Route(value = "", layout = MainLayout.class)
 //The view extends VerticalLayout, which places all child components vertically.
 public class ListView extends VerticalLayout {
     //The Grid component is typed with Contact.
