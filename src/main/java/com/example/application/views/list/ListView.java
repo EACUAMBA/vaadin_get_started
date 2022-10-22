@@ -12,6 +12,8 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import java.util.Objects;
+
 @PageTitle("Contacts | Vaadin CRM")
 @Route(value = "")
 //The view extends VerticalLayout, which places all child components vertically.
@@ -39,6 +41,7 @@ public class ListView extends VerticalLayout {
         );
         //Call updateList() once you have constructed the view.
         updateList();
+        closeEditor();
     }
 
     // The method returns a HorizontalLayout that wraps the form and the grid, showing them next to each other.
@@ -58,6 +61,13 @@ public class ListView extends VerticalLayout {
         //Use the service to fetch companies and statuses.
         contactForm = new ContactForm(crmService.findAllCompanies(), crmService.findAllStatuses());
         contactForm.setWidth("25rem");
+
+        //The save event listener calls saveContact()
+        contactForm.addListener(ContactForm.SaveEvent.class, this::saveContact);
+        //The delete event listener calls deleteContact().
+        contactForm.addListener(ContactForm.DeleteEvent.class, this::deleteContact);
+        //The close event listener closes the editor.
+        contactForm.addListener(ContactForm.CloseEvent.class, event -> closeEditor());
     }
 
     //The grid configuration is extracted to a separate method to keep the constructor easier to read.
@@ -71,6 +81,12 @@ public class ListView extends VerticalLayout {
         grid.addColumn(contact -> contact.getCompany().getName()).setHeader("Company");
         //Configure the columns to automatically adjust their size to fit their contents.
         grid.getColumns().forEach(contactColumn -> contactColumn.setAutoWidth(true));
+
+        //addValueChangeListener() adds a listener to the grid. The Grid component supports multi- and single-selection modes. You only need to select a single Contact, so you can use the asSingleSelect() method. The getValue() method returns the Contact in the selected row, or null if there is no selection.
+        grid.asSingleSelect()
+                .addValueChangeListener(event -> {
+                   editContact(event.getValue());
+                });
     }
 
     private HorizontalLayout getToolbar() {
@@ -82,6 +98,8 @@ public class ListView extends VerticalLayout {
         filterTextField.addValueChangeListener(e -> updateList());
 
         Button addContactButton = new Button("Add contact");
+        //Call addContact() when the user clicks on the "Add contact" button.
+        addContactButton.addClickListener(event -> addContact());
 
         //The toolbar uses a HorizontalLayout to place the TextField and Button next to each other.
         HorizontalLayout toolbar = new HorizontalLayout(filterTextField, addContactButton);
@@ -92,5 +110,58 @@ public class ListView extends VerticalLayout {
     //updateList() sets the grid items by calling the service with the value from the filter text field.
     public void updateList(){
         grid.setItems(crmService.findAllContacts(filterTextField.getValue()));
+    }
+
+    //editContact() sets the selected contact in the ContactForm and hides or shows the form, depending on the selection. It also sets the "editing" CSS class name when editing.
+    public void editContact(Contact contact){
+        if(Objects.isNull(contact))
+            closeEditor();
+        else{
+            contactForm.setContact(contact);
+            contactForm.setVisible(true);
+            addClassName("editing");
+        }
+    }
+
+    /*
+    The closeEditor() call at the end of the constructor:
+        - sets the form contact to null, clearing out old values;
+        - hides the form;
+        - removes the "editing" CSS class from the view.
+     */
+    private void closeEditor(){
+        contactForm.setContact(null);
+        contactForm.setVisible(false);
+        removeClassName("editing");
+    }
+
+    //addContact() clears the grid selection and creates a new Contact.
+    private void addContact(){
+        grid.asSingleSelect().clear();
+        editContact(new Contact());
+    }
+
+    /*
+    The save event listener calls saveContact(). It:
+        * Uses contactService to save the contact in the event to the database.
+        * Updates the list.
+        * Closes the editor.
+    */
+    private void saveContact(ContactForm.SaveEvent contact){
+        crmService.saveContact(contact.getContact());
+        updateList();
+        closeEditor();
+    }
+
+    /*
+    The delete event listener calls deleteContact(). It:
+        * uses contactService to delete the contact from the database;
+        * updates the list;
+        * closes the editor.
+     */
+    private void deleteContact(ContactForm.DeleteEvent contact){
+        crmService.deleteContact(contact.getContact());
+        updateList();
+        closeEditor();
     }
 }
