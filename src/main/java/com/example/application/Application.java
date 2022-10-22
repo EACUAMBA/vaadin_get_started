@@ -16,7 +16,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @Theme(value = "flowcrmtutorial")
-@PWA(name = "Flow CRM Tutorial", shortName = "Flow CRM Tutorial", offlineResources = {})
+//The @PWA annotation tells Vaadin to create a ServiceWorker and a manifest file.
+@PWA(
+        //name is the full name of the application for the manifest file.
+        name = "Flow CRM Tutorial",
+        //shortName should be short enough to fit under an icon when installed, and shouldn’t exceed 12 characters.
+        shortName = "Flow CRM Tutorial",
+        offlineResources = {}
+        )
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class Application implements AppShellConfigurator {
 
