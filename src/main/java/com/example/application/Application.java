@@ -22,7 +22,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         name = "Flow CRM Tutorial",
         //shortName should be short enough to fit under an icon when installed, and shouldn’t exceed 12 characters.
         shortName = "Flow CRM Tutorial",
-        offlineResources = {}
+        offlinePath = "offline.html",
+        offlineResources = {"./images/offline.webp"}
         )
 @NpmPackage(value = "line-awesome", version = "1.3.0")
 public class Application implements AppShellConfigurator {
