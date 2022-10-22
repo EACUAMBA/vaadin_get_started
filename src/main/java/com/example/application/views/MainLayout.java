@@ -12,11 +12,12 @@ import com.vaadin.flow.router.RouterLink;
 
 //AppLayout is a Vaadin layout with a header and a responsive drawer.
 public class MainLayout extends AppLayout {
-    public MainLayout(){
+    public MainLayout() {
         createHeader();
         createDrawer();
     }
-    private void createHeader(){
+
+    private void createHeader() {
         H1 logo = new H1("Vaadin CRM");
         logo.addClassNames("text-l", "m-m");
         HorizontalLayout header = new HorizontalLayout(
@@ -34,16 +35,18 @@ public class MainLayout extends AppLayout {
     }
 
 
-    public void createDrawer(){
+    public void createDrawer() {
         //Creates a RouterLink with the text "List" and ListView.class as the destination view.
         RouterLink listLink = new RouterLink("List", ListView.class);
+        RouterLink dashboardLink = new RouterLink("Dashboard", DashboardView.class);
         //Sets setHighlightCondition(HighlightConditions.sameLocation()) to avoid highlighting the link for partial route matches. (Technically, every route starts with an empty route, so without this, it would always show up as active, even though the user isn’t on the view.)
         listLink.setHighlightCondition(HighlightConditions.sameLocation());
 
         //Wraps the link in a VerticalLayout and adds it to the AppLayout drawer.
         addToDrawer(
                 new VerticalLayout(
-                listLink
-        ));
+                        listLink,
+                        dashboardLink
+                ));
     }
 }
