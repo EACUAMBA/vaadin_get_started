@@ -16,6 +16,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.PropertyId;
+import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 
 import java.util.List;
@@ -79,12 +80,33 @@ public class ContactForm extends FormLayout {
         saveButton.addClickShortcut(Key.ENTER);
         cancelButton.addClickShortcut(Key.ESCAPE);
 
+        //The save button calls the validateAndSave() method.
+        saveButton.addClickListener(event -> validateAndSave());
+        //The delete button fires a delete event and passes the active contact.
+        deleteButton.addClickListener(event -> fireEvent(new DeleteEvent(this, contact)));
+        //The cancel button fires a close event.
+        cancelButton.addClickListener(event -> fireEvent(new CloseEvent(this)));
+
+        //Validates the form every time it changes. If it’s invalid, it disables the save button to avoid invalid submissions.
+        contactBinder.addStatusChangeListener(event -> saveButton.setEnabled(contactBinder.isValid()));
+
         //Returns a HorizontalLayout containing the buttons to place them next to each other.
         return new HorizontalLayout(
                 saveButton,
                 deleteButton,
                 cancelButton
         );
+    }
+
+    private void validateAndSave(){
+        try{
+            //Write the form contents back to the original contact.
+            contactBinder.writeBean(contact);
+            //Fire a save event, so the parent component can handle the action.
+            fireEvent(new SaveEvent(this, contact));
+        }catch (ValidationException validationException){
+            validationException.printStackTrace();
+        }
     }
 
     public void setContact(Contact contact){
@@ -120,7 +142,7 @@ public class ContactForm extends FormLayout {
     }
 
     public static class CloseEvent extends ContactFormEvent{
-        CloseEvent(ContactForm source, Contact contact){
+        CloseEvent(ContactForm source){
             super(source, null);
         }
     }
